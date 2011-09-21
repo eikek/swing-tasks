@@ -1,0 +1,135 @@
+package org.eknet.swing.task.impl;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.EventListener;
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import org.eknet.swing.task.ExceptionHandler;
+
+// note, this is a modified version from the same named class in Raffael Herzogs "cru-beans" project.
+
+/**
+ * @author <a href="mailto:herzog@raffael.ch">Raffael Herzog</a>
+ * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
+ */
+public class EventEmitter<T extends EventListener> implements Iterable<T> {
+  private static final Logger log = LoggerFactory.getLogger(EventEmitter.class);
+
+  private final Class<T> listenerClass;
+  private final CopyOnWriteArrayList<T> listeners = new CopyOnWriteArrayList<T>();
+  private final T emitter;
+
+  private volatile ExceptionHandler<T> exceptionHandler = ExceptionHandler.RETHROW_EXCEPTION_HANDLER;
+
+  @SuppressWarnings({"unchecked"})
+  public EventEmitter(@NotNull Class<T> clazz, @Nullable ClassLoader loader, @Nullable ExceptionHandler<T> handler) {
+    ClassLoader l = loader;
+    if (l == null) {
+      l = clazz.getClassLoader();
+      if (l == null) {
+        log.warn("Given ClassLoader is null. Using ContextClassLoader from current thread.");
+        l = Thread.currentThread().getContextClassLoader();
+      }
+    }
+    emitter = (T) Proxy.newProxyInstance(l, new Class<?>[]{clazz}, createInvocationHandler());
+    this.listenerClass = clazz;
+    if (handler != null) {
+      this.exceptionHandler = handler;
+    }
+  }
+
+
+  public static <T extends EventListener> EventEmitter<T> newEmitter(Class<T> listenerClass) {
+    return newEmitter(listenerClass, listenerClass.getClassLoader());
+  }
+
+  public static <T extends EventListener> EventEmitter<T> newEmitter(Class<T> listenerClass, ClassLoader loader) {
+    return newEmitter(listenerClass, loader, null);
+  }
+
+  public static <T extends EventListener> EventEmitter<T> newEmitter(Class<T> listenerClass, ExceptionHandler<T> handler) {
+    return newEmitter(listenerClass, listenerClass.getClassLoader(), handler);
+  }
+
+  public static <T extends EventListener> EventEmitter<T> newEmitter(Class<T> listenerClass, ClassLoader loader, @Nullable ExceptionHandler<T> handler) {
+    return new EventEmitter<T>(listenerClass, loader, null);
+  }
+
+
+  public void addListener(T listener) {
+    listeners.add(listener);
+  }
+
+  public void removeListener(T listener) {
+    listeners.remove(listener);
+  }
+
+  @SuppressWarnings({"unchecked", "SuspiciousSystemArraycopy"})
+  public T[] getListeners() {
+    Object[] objArray = listeners.toArray();
+    T[] listeners = (T[]) Array.newInstance(listenerClass, objArray.length);
+    System.arraycopy(objArray, 0, listeners, 0, objArray.length);
+    return listeners;
+  }
+
+  public void setExceptionHandler(ExceptionHandler<T> exceptionHandler) {
+    if (exceptionHandler != null) {
+      this.exceptionHandler = exceptionHandler;
+    }
+  }
+
+  public int getListenerCount() {
+    return listeners.size();
+  }
+
+  public boolean isEmpty() {
+    return listeners.isEmpty();
+  }
+
+  public Iterator<T> iterator() {
+    return listeners.iterator();
+  }
+
+  public T emitter() {
+    return emitter;
+  }
+
+  protected InvocationHandler createInvocationHandler() {
+    return new EventInvocationHandler();
+  }
+
+  protected class EventInvocationHandler implements InvocationHandler {
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+      for (T l : EventEmitter.this) {
+        boolean keeprunning = invokeListener(l, method, args);
+        if (!keeprunning) {
+          break;
+        }
+      }
+      return null;
+    }
+
+    protected boolean invokeListener(T l, Method method, Object[] args) throws Throwable {
+      try {
+        method.invoke(l, args);
+        return true;
+      } catch (InvocationTargetException e) {
+          return exceptionHandler.handleException(l, e.getTargetException());
+      }
+    }
+  }
+
+}
