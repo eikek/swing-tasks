@@ -2,7 +2,7 @@ swing-tasks
 ===========
 
 This is a small library that aims to help with executing tasks from swing applications. It consist of a set of
-classes that build on top of the `SwingWorker` class.
+classes that build around the `SwingWorker` class.
 
 Compile
 -------
