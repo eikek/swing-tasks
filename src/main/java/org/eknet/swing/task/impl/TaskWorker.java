@@ -27,10 +27,10 @@ import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eknet.swing.task.TaskContext;
 import org.jetbrains.annotations.NotNull;
 
 import org.eknet.swing.task.Task;
+import org.eknet.swing.task.TaskContext;
 
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>

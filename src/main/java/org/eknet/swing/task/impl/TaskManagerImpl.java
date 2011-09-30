@@ -24,6 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,8 @@ public class TaskManagerImpl implements TaskManager {
           60L, TimeUnit.SECONDS,
           new SynchronousQueue<Runnable>());
 
+  private AtomicInteger blockingCounter = new AtomicInteger(0);
+
   public TaskManagerImpl() {
     taskListenerSupport.addListener(new TaskListenerAdapter() {
       @Override
@@ -68,11 +71,14 @@ public class TaskManagerImpl implements TaskManager {
           if (newState.isFinalState()) {
             tasks.remove(contextId);
             if (task.getMode() == Mode.BLOCKING) {
-              blocker.unblock(task.getComponent());
+              if (blockingCounter.decrementAndGet() == 0) {
+                blocker.unblock(task.getComponent());
+              }
             }
           }
           if (newState == State.STARTED) {
             if (task.getMode() == Mode.BLOCKING) {
+              blockingCounter.incrementAndGet();
               blocker.block(task.getComponent());
             }
           }

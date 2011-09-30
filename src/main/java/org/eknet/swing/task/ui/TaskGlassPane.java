@@ -16,27 +16,29 @@
 
 package org.eknet.swing.task.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import org.eknet.swing.task.Mode;
 import org.eknet.swing.task.TaskManager;
 import org.eknet.swing.task.TaskPredicates;
 
 /**
+ * A simple panel that shows a list of current {@link Mode#BLOCKING} tasks.
+ * <p/>
+ * It draws a semi translucent black background and a centered task control
+ * list. This can be used as a glass pane.
+ * 
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 21.07.11 13:32
  */
@@ -45,12 +47,12 @@ public class TaskGlassPane extends JPanel {
   private Color color1;
   private Color color2;
 
-  private JPanel container;
   private TaskList taskList;
 
+  @Nullable
   private final TaskManager taskManager;
 
-  public TaskGlassPane(@NotNull TaskManager taskManager) {
+  public TaskGlassPane(@Nullable TaskManager taskManager) {
     this.color1 = new Color(0, 0, 0, 175);
     this.color2 = new Color(0, 0, 0, 120);
     this.taskManager = taskManager;
@@ -59,41 +61,30 @@ public class TaskGlassPane extends JPanel {
 
 
   protected void initComponents() {
-    container = new JPanel(new BorderLayout());
+    if (getTaskManager() != null) {
+      taskList = new TaskList(getTaskManager());
+      taskList.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+      taskList.setFilter(TaskPredicates.blockingTasks);
+
+      GridBagLayout gbl = new GridBagLayout();
+      GridBagConstraints gbc = new GridBagConstraints();
+      gbc.ipadx = 200;
+      gbc.ipady = 60;
+      this.setLayout(gbl);
+
+      this.add(taskList, gbc);
+    }
     this.setVisible(false);
-    add(container, BorderLayout.CENTER);
-
-    container.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-    container.setVisible(false);
-
-    taskList = new TaskList(taskManager);
-    taskList.setMinimumSize(new Dimension(400, 80));
-    taskList.setFilter(TaskPredicates.blockingTasks);
-    taskList.addPropertyChangeListener(new PropertyChangeListener() {
-      @Override
-      public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals("task") && container != null) {
-          container.setVisible(taskList.getTaskCount() > 0);
-        }
-      }
-    });
-
-    GridBagLayout gbl = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
-    gbc.fill = GridBagConstraints.CENTER;
-    gbl.setConstraints(this, gbc);
-    this.setLayout(gbl);
-    container.add(taskList);
   }
 
   @Override
   public void setVisible(boolean aFlag) {
     super.setVisible(aFlag);
-    if (taskList != null) {
+    if (getTaskList() != null) {
       if (aFlag) {
-        taskList.start();
+        getTaskList().start();
       } else {
-        taskList.stop();
+        getTaskList().stop();
       }
     }
   }
@@ -102,17 +93,9 @@ public class TaskGlassPane extends JPanel {
     super.setVisible(flag);
   }
 
+  @Nullable
   public TaskManager getTaskManager() {
     return taskManager;
-  }
-
-  /**
-   * Returns the component that contains the taskList component.
-   *
-   * @return
-   */
-  public JPanel getContainer() {
-    return container;
   }
 
   public TaskList getTaskList() {
@@ -125,7 +108,6 @@ public class TaskGlassPane extends JPanel {
       super.paintComponent(g);
       return;
     }
-
     Graphics2D g2d = (Graphics2D) g;
     GradientPaint fill = new GradientPaint(0, 0, color1, 0, getHeight(), color2);
     g2d.setPaint(fill);
@@ -134,7 +116,5 @@ public class TaskGlassPane extends JPanel {
     setOpaque(false);
     super.paintComponent(g);
     setOpaque(true);
-
   }
-
 }

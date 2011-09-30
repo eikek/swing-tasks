@@ -35,7 +35,6 @@ import javax.swing.SwingUtilities;
 import org.jetbrains.annotations.NotNull;
 
 import org.eknet.swing.task.ChangeEvent;
-import org.eknet.swing.task.Mode;
 import org.eknet.swing.task.State;
 import org.eknet.swing.task.TaskControl;
 import org.eknet.swing.task.TaskListenerAdapter;
@@ -96,10 +95,8 @@ public class TaskList extends JPanel {
     this.filter = filter;
   }
 
-  public int getTaskCount() {
-    synchronized (controls) {
-      return controls.size();
-    }
+  public synchronized int getTaskCount() {
+    return controls.size();
   }
 
   public void setContainer(Container container) {
@@ -162,63 +159,35 @@ public class TaskList extends JPanel {
     }
   }
 
-  public void addTask(@NotNull TaskControl taskControl) {
-    TaskControlPanel panel = null;
-    synchronized (controls) {
-      if (!controls.containsKey(taskControl.getContext().getContextId())) {
-        panel = new TaskControlPanel(taskControl);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createEmptyBorder(5, 5, 5, 5),
-                BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
-                        BorderFactory.createEmptyBorder(5, 5, 5, 5))));
-        controls.put(taskControl.getContext().getContextId(), panel);
+  protected TaskControlPanel newTaskControlPanel(TaskControl control) {
+    TaskControlPanel panel = new TaskControlPanel(control);
+    panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createEmptyBorder(5, 5, 5, 5),
+            BorderFactory.createCompoundBorder(BorderFactory.createEtchedBorder(),
+                    BorderFactory.createEmptyBorder(5, 5, 5, 5))));
+    return panel;
+  }
+
+  public synchronized void addTask(@NotNull TaskControl taskControl) {
+    String contextId = taskControl.getContext().getContextId();
+    if (!controls.containsKey(contextId)) {
+      TaskControlPanel panel = newTaskControlPanel(taskControl);
+      controls.put(contextId, panel);
+      addComponent(panel);
+    }
+  }
+
+  public synchronized void removeTask(@NotNull final String contextId) {
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        TaskControlPanel panel = controls.get(contextId);
+        if (panel != null) {
+          removeComponent(panel);
+        }
+        controls.remove(contextId);
       }
-    }
-    if (panel != null) {
-      onEDT(new AddRunnable(panel));
-    }
-  }
-
-  public void removeTask(@NotNull String contextId) {
-    synchronized (controls) {
-      controls.remove(contextId);
-    }
-    onEDT(new RemoveRunnable(contextId));
-  }
-
-  private void onEDT(@NotNull Runnable run) {
-    if (SwingUtilities.isEventDispatchThread()) {
-      run.run();
-    } else {
-      SwingUtilities.invokeLater(run);
-    }
-  }
-
-  private class RemoveRunnable implements Runnable {
-    private final String contextId;
-
-    private RemoveRunnable(String contextId) {
-      this.contextId = contextId;
-    }
-
-    @Override
-    public void run() {
-      removeComponent(controls.get(contextId));
-    }
-  }
-
-
-  private class AddRunnable implements Runnable {
-    private final TaskControlPanel taskControl;
-
-    private AddRunnable(@NotNull TaskControlPanel taskControl) {
-      this.taskControl = taskControl;
-    }
-
-    @Override
-    public void run() {
-      addComponent(taskControl);
-    }
+    });
   }
 
   private class ControlListener extends TaskListenerAdapter {
@@ -230,11 +199,9 @@ public class TaskList extends JPanel {
         TaskControl tc = taskManager.getTask(contextId);
         if (tc != null && state == State.PENDING && filter.apply(tc)) {
           addTask(tc);
-          TaskList.this.firePropertyChange("task", null, tc);
         }
         if (state.isFinalState()) {
           removeTask(contextId);
-          TaskList.this.firePropertyChange("task", tc, null);
         }
       }
     }

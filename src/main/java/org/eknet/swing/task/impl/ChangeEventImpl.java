@@ -74,4 +74,13 @@ public class ChangeEventImpl<T> implements ChangeEvent<T> {
     result = 31 * result + (newValue != null ? newValue.hashCode() : 0);
     return result;
   }
+
+  @Override
+  public String toString() {
+    return "ChangeEventImpl{" +
+            "source=" + source +
+            ", oldValue=" + oldValue +
+            ", newValue=" + newValue +
+            '}';
+  }
 }

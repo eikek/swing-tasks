@@ -39,7 +39,7 @@ import org.eknet.swing.task.TaskListener;
 /**
  * Wraps the execution of a {@link Task} which is governed by a {@link TaskWorker}. This context holds
  * adds listener support. It registers itself as {@link java.beans.PropertyChangeListener} to the {@link TaskWorker}
- * object and translates the {@link javax.swing.SwingWorker} events to {@link org.alainn.swingbox.task.TaskEvent}s.
+ * object and translates the {@link javax.swing.SwingWorker} events to {@link org.eknet.swing.task.TaskEvent}s.
  * <p/>
  * Each execution can be identified by a growing id. For retrieving task execution properties it delegates
  * to the wrapped {@link TaskWorker}.
@@ -210,5 +210,12 @@ public class TaskContextImpl implements TaskContext, PropertyChangeListener {
   @Override
   public int hashCode() {
     return contextId != null ? contextId.hashCode() : 0;
+  }
+
+  @Override
+  public String toString() {
+    return "TaskContextImpl{" +
+            "contextId='" + contextId + '\'' +
+            '}';
   }
 }
