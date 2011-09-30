@@ -27,6 +27,7 @@ import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.eknet.swing.task.TaskContext;
 import org.jetbrains.annotations.NotNull;
 
 import org.eknet.swing.task.Task;
@@ -45,6 +46,8 @@ public class TaskWorker<V, C> extends SwingWorker<V, C> implements PropertyChang
   private Long finishedTimestamp = null;
 
   private boolean error = false;
+
+  private TaskContext context;
 
   public TaskWorker(@NotNull Task<V, C> task) {
     this.task = task;
@@ -65,6 +68,10 @@ public class TaskWorker<V, C> extends SwingWorker<V, C> implements PropertyChang
     task.process(chunks);
   }
 
+  public void setContext(TaskContext context) {
+    this.context = context;
+  }
+
   @Override
   protected void done() {
     this.finishedTimestamp = System.currentTimeMillis();
@@ -75,12 +82,19 @@ public class TaskWorker<V, C> extends SwingWorker<V, C> implements PropertyChang
       task.failed(e);
     } catch (ExecutionException e) {
       this.error = true;
-      log.debug("Error executing task " + task.getId(), e);
+      log.debug("Error executing task " + task.getId() + "/" + getContextId(), e);
       task.failed(e.getCause());
     } catch (CancellationException e) {
-      log.debug("Task '" + task.getId() + "' cancelled by user: {}", e);
+      log.debug("Task '{}/{}' cancelled by user", task.getId(), getContextId());
       task.failed(e);
     }
+  }
+
+  private String getContextId() {
+    if (context != null) {
+      return context.getContextId();
+    }
+    return null;
   }
 
   public Long getStartedTimestamp() {

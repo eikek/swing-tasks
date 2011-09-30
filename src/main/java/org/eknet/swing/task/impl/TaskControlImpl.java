@@ -18,6 +18,9 @@ package org.eknet.swing.task.impl;
 
 import java.util.concurrent.ExecutionException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.jetbrains.annotations.NotNull;
 
 import org.eknet.swing.task.State;
@@ -29,7 +32,7 @@ import org.eknet.swing.task.TaskControl;
  * @since 20.07.11 21:22
  */
 public class TaskControlImpl<V> implements TaskControl<V> {
-
+  private final static Logger log = LoggerFactory.getLogger(TaskControlImpl.class);
   private final TaskContextImpl taskContext;
 
   public TaskControlImpl(@NotNull TaskContextImpl taskContext) {
@@ -63,6 +66,7 @@ public class TaskControlImpl<V> implements TaskControl<V> {
 
   @Override
   public void cancel() {
+    log.info("About to cancel task: " + getContext().getContextId());
     getWorker().cancel(true);
   }
 

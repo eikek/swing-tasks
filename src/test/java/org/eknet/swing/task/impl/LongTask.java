@@ -22,6 +22,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.eknet.swing.task.AbstractTask;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,13 +34,15 @@ import org.eknet.swing.task.Tracker;
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 20.07.11 19:17
  */
-public class LongTask implements Task<Long, Long> {
+public class LongTask extends AbstractTask<Long, Long> {
   private final static Logger log = LoggerFactory.getLogger(LongTask.class);
 
-  @NotNull
-  @Override
-  public String getId() {
-    return "long-running";
+  public LongTask() {
+    super("long-running", Mode.BACKGROUND);
+  }
+
+  public LongTask(Mode mode) {
+    super("long-running", mode);
   }
 
   @Override
@@ -65,7 +68,7 @@ public class LongTask implements Task<Long, Long> {
 
   @Override
   public void failed(@Nullable Throwable cause) {
-    log.error("Task failed: " + cause, cause);
+    log.error("Task failed: " + cause);
   }
 
   @Override
@@ -73,14 +76,4 @@ public class LongTask implements Task<Long, Long> {
     log.info("Intermediate: " + chunks);
   }
 
-  @NotNull
-  @Override
-  public Mode getMode() {
-    return Mode.BACKGROUND;
-  }
-
-  @Override
-  public Component getComponent() {
-    return null;
-  }
 }

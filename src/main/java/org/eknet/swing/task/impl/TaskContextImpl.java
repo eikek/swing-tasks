@@ -60,6 +60,7 @@ public class TaskContextImpl implements TaskContext, PropertyChangeListener {
 
   public TaskContextImpl(@NotNull TaskWorker worker, @NotNull TaskListenerSupportImpl taskListenerSupport) {
     this.worker = worker;
+    this.worker.setContext(this);
     this.taskListenerSupport = taskListenerSupport;
     this.worker.addPropertyChangeListener(this);
   }
