@@ -80,13 +80,18 @@ public class TaskWorker<V, C> extends SwingWorker<V, C> implements PropertyChang
     } catch (InterruptedException e) {
       log.error("Interrupted during get()", e);
       task.failed(e);
-    } catch (ExecutionException e) {
-      this.error = true;
-      log.debug("Error executing task " + task.getId() + "/" + getContextId(), e);
-      task.failed(e.getCause());
     } catch (CancellationException e) {
       log.debug("Task '{}/{}' cancelled by user", task.getId(), getContextId());
       task.failed(e);
+    } catch (Exception e) {
+      this.error = true;
+      log.debug("Error executing task " + task.getId() + "/" + getContextId(), e);
+      if (e instanceof ExecutionException) {
+        ExecutionException executionException = (ExecutionException) e;
+        task.failed(e.getCause());
+      } else {
+        task.failed(e);
+      }
     }
   }
 
