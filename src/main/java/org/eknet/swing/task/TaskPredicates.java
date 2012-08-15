@@ -16,7 +16,7 @@
 
 package org.eknet.swing.task;
 
-import org.jetbrains.annotations.NotNull;
+import org.eknet.swing.task.impl.Util;
 
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
@@ -26,35 +26,39 @@ public class TaskPredicates {
 
   public static TaskPredicate blockingTasks = new TaskPredicate() {
     @Override
-    public boolean apply(@NotNull TaskControl input) {
+    public boolean apply(TaskControl input) {
+      Util.checkNotNullArgument(input);
       return input.getContext().getTask().getMode() == Mode.BLOCKING;
     }
   };
 
   public static TaskPredicate backgroundTasks = new TaskPredicate() {
     @Override
-    public boolean apply(@NotNull TaskControl input) {
+    public boolean apply(TaskControl input) {
+      Util.checkNotNullArgument(input);
       return input.getContext().getTask().getMode() == Mode.BACKGROUND;
     }
   };
 
   public static TaskPredicate pendingTasks = new TaskPredicate() {
     @Override
-    public boolean apply(@NotNull TaskControl input) {
+    public boolean apply(TaskControl input) {
+      Util.checkNotNullArgument(input);
       return input.getContext().getState() == State.PENDING;
     }
   };
 
   public static TaskPredicate startedTasks = new TaskPredicate() {
     @Override
-    public boolean apply(@NotNull TaskControl input) {
+    public boolean apply(TaskControl input) {
+      Util.checkNotNullArgument(input);
       return input.getContext().getState() == State.STARTED;
     }
   };
 
   public static TaskPredicate allTasks = new TaskPredicate() {
     @Override
-    public boolean apply(@NotNull TaskControl control) {
+    public boolean apply(TaskControl control) {
       return true;
     }
   };

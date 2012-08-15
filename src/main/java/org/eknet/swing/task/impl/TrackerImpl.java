@@ -16,8 +16,6 @@
 
 package org.eknet.swing.task.impl;
 
-import org.jetbrains.annotations.Nullable;
-
 import org.eknet.swing.task.Tracker;
 
 /**
@@ -55,7 +53,7 @@ public class TrackerImpl<C> implements Tracker<C> {
   }
 
   @Override
-  public void setPhase(@Nullable String phase) {
+  public void setPhase(String phase) {
     worker.setPhase(phase);
   }
 }

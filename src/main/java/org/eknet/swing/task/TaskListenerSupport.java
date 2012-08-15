@@ -16,8 +16,6 @@
 
 package org.eknet.swing.task;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 20.07.11 11:31
@@ -39,7 +37,7 @@ public interface TaskListenerSupport {
    * @param taskId
    * @param listener
    */
-  void addListener(@NotNull String taskId, TaskListener listener);
-  void removeListener(@NotNull String taskId, TaskListener listener);
+  void addListener(/*@NotNull*/ String taskId, TaskListener listener);
+  void removeListener(/*@NotNull*/ String taskId, TaskListener listener);
 
 }

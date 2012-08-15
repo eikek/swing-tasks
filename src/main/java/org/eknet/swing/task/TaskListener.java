@@ -18,8 +18,6 @@ package org.eknet.swing.task;
 
 import java.util.EventListener;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Listener receives events about execution of a task. All methods are invoked
  * on the EDT.
@@ -44,7 +42,7 @@ public interface TaskListener extends EventListener {
    * </ol>
    * @param event
    */
-  void stateChanged(@NotNull ChangeEvent<State> event);
+  void stateChanged(/*@NotNull*/ ChangeEvent<State> event);
 
   /**
    * Receives notifications about the current progress of a task. The progress values are
@@ -52,7 +50,7 @@ public interface TaskListener extends EventListener {
    *
    * @param event
    */
-  void progressChanged(@NotNull ChangeEvent<Integer> event);
+  void progressChanged(/*@NotNull*/ ChangeEvent<Integer> event);
 
   /**
    * Receives notifications about phase changes of a task. A task can set information messages
@@ -60,5 +58,5 @@ public interface TaskListener extends EventListener {
    * 
    * @param event
    */
-  void phaseChanged(@NotNull ChangeEvent<String> event);
+  void phaseChanged(/*@NotNull*/ ChangeEvent<String> event);
 }

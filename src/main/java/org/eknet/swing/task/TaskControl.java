@@ -16,23 +16,22 @@
 
 package org.eknet.swing.task;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 20.07.11 09:41
  */
 public interface TaskControl<V> {
 
-  @Nullable
   V waitFor();
 
   void execute();
   
   void cancel();
 
-  @NotNull
+  /**
+   *
+   * @return the task context, never null
+   */
   TaskContext getContext();
 
 }

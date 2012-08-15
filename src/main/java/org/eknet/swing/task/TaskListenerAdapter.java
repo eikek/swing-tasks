@@ -16,8 +16,6 @@
 
 package org.eknet.swing.task;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 20.07.11 09:14
@@ -25,16 +23,16 @@ import org.jetbrains.annotations.NotNull;
 public class TaskListenerAdapter implements TaskListener {
 
   @Override
-  public void stateChanged(@NotNull ChangeEvent<State> event) {
+  public void stateChanged(/*@NotNull*/ ChangeEvent<State> event) {
 
   }
 
   @Override
-  public void progressChanged(@NotNull ChangeEvent<Integer> event) {
+  public void progressChanged(/*@NotNull*/ ChangeEvent<Integer> event) {
 
   }
 
   @Override
-  public void phaseChanged(@NotNull ChangeEvent<String> event) {
+  public void phaseChanged(/*@NotNull*/ ChangeEvent<String> event) {
   }
 }

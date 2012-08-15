@@ -45,8 +45,6 @@ import java.util.WeakHashMap;
 import javax.swing.RootPaneContainer;
 import javax.swing.Timer;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.GlassPaneContainer;
 
 // Note, this is a modified version of ch.raffael.util.swing.tasks.DefaultTaskTracker from
@@ -105,7 +103,8 @@ public class Blocker {
     }
   }
 
-  protected void blockComponent(@NotNull Component component) {
+  protected void blockComponent(/*@NotNull*/ Component component) {
+    Util.checkNotNullArgument(component);
     Component glassPane = findGlassPane(component);
     if (glassPane != null) {
       setupGlassPane(glassPane);
@@ -129,7 +128,8 @@ public class Blocker {
     return glassPane;
   }
 
-  protected void unblockComponent(@NotNull Component component) {
+  protected void unblockComponent(/*@NotNull*/ Component component) {
+    Util.checkNotNullArgument(component);
     Component glassPane = findGlassPane(component);
     if (glassPane != null) {
       glassPane.setCursor(Cursor.getDefaultCursor());

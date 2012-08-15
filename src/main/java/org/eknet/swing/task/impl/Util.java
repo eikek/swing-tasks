@@ -6,8 +6,6 @@ import java.awt.Window;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 21.09.11 21:05
@@ -16,7 +14,8 @@ public final class Util {
 
   private Util() {}
 
-  public static <T> T findComponent(Component component, @NotNull Class<T> type) {
+  public static <T> T findComponent(Component component, /*@NotNull*/ Class<T> type) {
+    checkNotNullArgument(type);
     while (component != null) {
       if (type.isInstance(component)) {
         //noinspection unchecked
@@ -106,5 +105,27 @@ public final class Util {
     }
     buffer.append(String.format("%02d", seconds));
     return buffer.toString();
+  }
+
+  public static void checkNotNullArgument(Object obj, String message) {
+    String msg = message == null ? "violation of notnull constraint" : message;
+    if (obj == null) {
+      throw new IllegalArgumentException(msg);
+    }
+  }
+
+  public static void checkNotNullArgument(Object obj) {
+    checkNotNullArgument(obj, null);
+  }
+
+  public static void checkNotNullState(Object obj, String message) {
+    String msg = message == null ? "violation of notnull constraint" : message;
+    if (obj == null) {
+      throw new IllegalStateException(msg);
+    }
+  }
+
+  public static void checkNotNullState(Object obj) {
+    checkNotNullArgument(obj, null);
   }
 }

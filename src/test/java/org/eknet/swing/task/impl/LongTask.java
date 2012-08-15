@@ -16,18 +16,13 @@
 
 package org.eknet.swing.task.impl;
 
-import java.awt.Component;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.eknet.swing.task.AbstractTask;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import org.eknet.swing.task.Mode;
-import org.eknet.swing.task.Task;
 import org.eknet.swing.task.Tracker;
 
 /**
@@ -46,7 +41,7 @@ public class LongTask extends AbstractTask<Long, Long> {
   }
 
   @Override
-  public Long execute(@NotNull Tracker<Long> tracker) throws Exception {
+  public Long execute(Tracker<Long> tracker) throws Exception {
     for (int i = 0; i < 10; i++) {
       try {
         Thread.sleep(1000);
@@ -62,12 +57,12 @@ public class LongTask extends AbstractTask<Long, Long> {
   }
 
   @Override
-  public void done(@Nullable Long value) {
+  public void done(Long value) {
     log.info("Done: " + value);
   }
 
   @Override
-  public void failed(@Nullable Throwable cause) {
+  public void failed(Throwable cause) {
     log.error("Task failed: " + cause);
   }
 

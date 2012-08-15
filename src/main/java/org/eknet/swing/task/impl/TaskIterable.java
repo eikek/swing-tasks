@@ -2,8 +2,6 @@ package org.eknet.swing.task.impl;
 
 import java.util.Iterator;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.TaskControl;
 import org.eknet.swing.task.TaskPredicate;
 
@@ -26,11 +24,15 @@ public class TaskIterable implements Iterable<TaskControl> {
     return new TaskIterator(delegate.iterator(), filter);
   }
 
-  public static TaskIterable filter(@NotNull Iterable<TaskControl> iterable, @NotNull TaskPredicate filter) {
+  public static TaskIterable filter(/*@NotNull*/ Iterable<TaskControl> iterable, /*@NotNull*/ TaskPredicate filter) {
+    Util.checkNotNullArgument(iterable);
+    Util.checkNotNullArgument(filter);
     return new TaskIterable(iterable, filter);
   }
 
-  public static TaskControl find(@NotNull Iterable<TaskControl> iterable, @NotNull TaskPredicate filter) {
+  public static TaskControl find(/*@NotNull */Iterable<TaskControl> iterable, /*@NotNull*/ TaskPredicate filter) {
+    Util.checkNotNullArgument(iterable);
+    Util.checkNotNullArgument(filter);
     Iterator<TaskControl> iter = filter(iterable, filter).iterator();
     if (iter.hasNext()) {
       return iter.next();

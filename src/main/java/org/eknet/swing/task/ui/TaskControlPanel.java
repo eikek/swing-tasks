@@ -34,8 +34,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.ChangeEvent;
 import org.eknet.swing.task.State;
 import org.eknet.swing.task.TaskContext;
@@ -124,7 +122,8 @@ public class TaskControlPanel extends JPanel {
     });
   }
 
-  public synchronized void setTaskControl(@NotNull TaskControl control) {
+  public synchronized void setTaskControl(/*@NotNull*/ TaskControl control) {
+    Util.checkNotNullArgument(control);
     if (this.taskControl != null) {
       this.taskControl.getContext().removeListener(listener);
     }
@@ -155,7 +154,8 @@ public class TaskControlPanel extends JPanel {
   
   private class Listener implements TaskListener {
     @Override
-    public void stateChanged(@NotNull ChangeEvent<State> event) {
+    public void stateChanged(/*@NotNull*/ ChangeEvent<State> event) {
+      Util.checkNotNullArgument(event);
       State state = event.getNewValue();
       updateState(state, getTaskName(event.getSource()));
     }
@@ -198,7 +198,8 @@ public class TaskControlPanel extends JPanel {
     }
 
     @Override
-    public void progressChanged(@NotNull ChangeEvent<Integer> event) {
+    public void progressChanged(/*@NotNull*/ ChangeEvent<Integer> event) {
+      Util.checkNotNullArgument(event);
       Integer value = event.getNewValue();
       if (value != null) {
         if (progressBar.isIndeterminate()) {
@@ -209,7 +210,8 @@ public class TaskControlPanel extends JPanel {
     }
 
     @Override
-    public void phaseChanged(@NotNull ChangeEvent<String> event) {
+    public void phaseChanged(/*@NotNull*/ ChangeEvent<String> event) {
+      Util.checkNotNullArgument(event);
       String phase = event.getNewValue();
       if (phase != null) {
         phaseLabel.setText(phase);

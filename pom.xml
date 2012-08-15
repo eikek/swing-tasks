@@ -57,11 +57,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.jetbrains</groupId>
-      <artifactId>annotations</artifactId>
-      <version>10.5</version>
-    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>

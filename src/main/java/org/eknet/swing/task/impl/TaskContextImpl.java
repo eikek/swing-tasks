@@ -25,9 +25,6 @@ import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import org.eknet.swing.task.ChangeEvent;
 import org.eknet.swing.task.Mode;
 import org.eknet.swing.task.State;
@@ -58,14 +55,16 @@ public class TaskContextImpl implements TaskContext, PropertyChangeListener {
   private final EventEmitter<TaskListener> localListeners = EventEmitter
           .newEmitter(TaskListener.class, new LoggingExceptionHandler<TaskListener>(log));
 
-  public TaskContextImpl(@NotNull TaskWorker worker, @NotNull TaskListenerSupportImpl taskListenerSupport) {
+  public TaskContextImpl(/*@NotNull*/ TaskWorker worker, /*@NotNull*/ TaskListenerSupportImpl taskListenerSupport) {
+    Util.checkNotNullArgument(worker);
+    Util.checkNotNullArgument(taskListenerSupport);
     this.worker = worker;
     this.worker.setContext(this);
     this.taskListenerSupport = taskListenerSupport;
     this.worker.addPropertyChangeListener(this);
   }
 
-  @NotNull
+  /*@NotNull*/
   @Override
   public String getContextId() {
     return contextId;
@@ -81,7 +80,7 @@ public class TaskContextImpl implements TaskContext, PropertyChangeListener {
     return worker.getFinishTimestamp();
   }
 
-  @NotNull
+  /*@NotNull*/
   @Override
   public State getState() {
     if (worker.isCancelled()) {
@@ -128,25 +127,25 @@ public class TaskContextImpl implements TaskContext, PropertyChangeListener {
     return worker;
   }
 
-  @NotNull
+  /*@NotNull*/
   @Override
   public Task getTask() {
     return worker.getTask();
   }
 
-  public void fireStateChangeEvent(@Nullable State oldValue, @Nullable State newValue) {
+  public void fireStateChangeEvent(/*@Nullable*/ State oldValue, /*@Nullable*/ State newValue) {
     ChangeEvent<State> e = new ChangeEventImpl<State>(oldValue, newValue, this);
     taskListenerSupport.fireStateChanged(e);
     localListeners.emitter().stateChanged(e);
   }
 
-  public void fireProgressChangeEvent(@Nullable Integer oldValue, @Nullable Integer newValue) {
+  public void fireProgressChangeEvent(/*@Nullable*/ Integer oldValue, /*@Nullable*/ Integer newValue) {
     ChangeEvent<Integer> e = new ChangeEventImpl<Integer>(oldValue, newValue, this);
     taskListenerSupport.fireProgressChanged(e);
     localListeners.emitter().progressChanged(e);
   }
 
-  public void firePhaseChangeEvent(@Nullable String oldValue, @Nullable String newValue) {
+  public void firePhaseChangeEvent(/*@Nullable*/ String oldValue, /*@Nullable*/ String newValue) {
     ChangeEvent<String> e = new ChangeEventImpl<String>(oldValue, newValue, this);
     taskListenerSupport.firePhaseChanged(e);
     localListeners.emitter().phaseChanged(e);

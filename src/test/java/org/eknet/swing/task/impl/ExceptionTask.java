@@ -19,9 +19,6 @@ package org.eknet.swing.task.impl;
 import java.awt.Component;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import org.eknet.swing.task.Mode;
 import org.eknet.swing.task.Task;
 import org.eknet.swing.task.Tracker;
@@ -32,25 +29,24 @@ import org.eknet.swing.task.Tracker;
  */
 public class ExceptionTask implements Task<Long, Long> {
 
-  @NotNull
   @Override
   public String getId() {
     return "exception-task";
   }
 
   @Override
-  public Long execute(@NotNull Tracker<Long> longTracker) throws Exception {
+  public Long execute(Tracker<Long> longTracker) throws Exception {
     toString();
     throw new RuntimeException("Exception while executing.");
   }
 
   @Override
-  public void done(@Nullable Long value) {
+  public void done(Long value) {
     toString();
   }
 
   @Override
-  public void failed(@Nullable Throwable cause) {
+  public void failed(Throwable cause) {
     toString();
   }
 
@@ -59,7 +55,6 @@ public class ExceptionTask implements Task<Long, Long> {
     toString();
   }
 
-  @NotNull
   @Override
   public Mode getMode() {
     return Mode.BACKGROUND;

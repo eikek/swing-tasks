@@ -16,9 +16,6 @@
 
 package org.eknet.swing.task;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 /**
  * Represents the context of a running task.
  * 
@@ -32,29 +29,46 @@ public interface TaskContext {
    * is (at least) unique among all executions in this application
    * run.
    *
-   * @return 
+   * @return the context id, never null
    */
-  @NotNull
   String getContextId();
-  
-  @NotNull
+
+  /**
+   *
+   * @return The task to this context, never null
+   */
   Task getTask();
 
-  @Nullable
+  /**
+   *
+   * @return the timestamp at which the task was started or null
+   */
   Long getStartedTimestamp();
 
-  @Nullable
+  /**
+   * The timestamp at which the task finished, or null
+   * @return
+   */
   Long getFinishTimestamp();
 
-  @NotNull
+  /**
+   *
+   * @return the tasks current state, never null
+   */
   State getState();
 
   int getProgress();
 
-  @Nullable
+  /**
+   * Returns the tasks current phase, or null
+   * @return
+   */
   String getPhase();
 
-  @Nullable
+  /**
+   *
+   * @return the duration this task is running or null (if not started)
+   */
   Long getDuration();
 
   /**

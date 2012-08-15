@@ -32,8 +32,6 @@ import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.ChangeEvent;
 import org.eknet.swing.task.State;
 import org.eknet.swing.task.TaskControl;
@@ -41,6 +39,7 @@ import org.eknet.swing.task.TaskListenerAdapter;
 import org.eknet.swing.task.TaskManager;
 import org.eknet.swing.task.TaskPredicate;
 import org.eknet.swing.task.TaskPredicates;
+import org.eknet.swing.task.impl.Util;
 
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
@@ -60,8 +59,9 @@ public class TaskList extends JPanel {
 
   private volatile boolean running = false;
 
-  public TaskList(@NotNull TaskManager taskManager) {
+  public TaskList(/*@NotNull*/ TaskManager taskManager) {
     super(new BorderLayout());
+    Util.checkNotNullArgument(taskManager);
     this.taskManager = taskManager;
     initComponent();
   }
@@ -168,7 +168,8 @@ public class TaskList extends JPanel {
     return panel;
   }
 
-  public synchronized void addTask(@NotNull TaskControl taskControl) {
+  public synchronized void addTask(/*@NotNull*/ TaskControl taskControl) {
+    Util.checkNotNullArgument(taskControl);
     String contextId = taskControl.getContext().getContextId();
     if (!controls.containsKey(contextId)) {
       TaskControlPanel panel = newTaskControlPanel(taskControl);
@@ -177,7 +178,8 @@ public class TaskList extends JPanel {
     }
   }
 
-  public synchronized void removeTask(@NotNull final String contextId) {
+  public synchronized void removeTask(/*@NotNull*/ final String contextId) {
+    Util.checkNotNullArgument(contextId);
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -192,7 +194,8 @@ public class TaskList extends JPanel {
 
   private class ControlListener extends TaskListenerAdapter {
     @Override
-    public void stateChanged(@NotNull ChangeEvent<State> event) {
+    public void stateChanged(/*@NotNull*/ ChangeEvent<State> event) {
+      Util.checkNotNullArgument(event);
       State state = event.getNewValue();
       String contextId = event.getSource().getContextId();
       if (state != null) {

@@ -16,8 +16,6 @@
 
 package org.eknet.swing.task;
 
-import org.jetbrains.annotations.Nullable;
-
 /**
  * Set intermediate results from within a long-running task.
  * <p/>
@@ -49,7 +47,7 @@ public interface Tracker<C> {
    */
   void setProgress(int min, int max, int current);
 
-  void setPhase(@Nullable String phase);
+  void setPhase(/*@Nullable*/ String phase);
 
   void publish(C... chunks);
 

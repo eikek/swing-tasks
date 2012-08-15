@@ -22,8 +22,6 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.ChangeEvent;
 import org.eknet.swing.task.State;
 import org.eknet.swing.task.Task;
@@ -56,7 +54,8 @@ public class TaskListenerSupportImpl implements TaskListenerSupport {
   }
 
   @Override
-  public void addListener(@NotNull String taskId, TaskListener listener) {
+  public void addListener(/*@NotNull*/ String taskId, TaskListener listener) {
+    Util.checkNotNullArgument(taskId);
     if (listener != null) {
       EventEmitter<TaskListener> emitter = getTaskListener(taskId);
       emitter.addListener(listener);
@@ -78,7 +77,8 @@ public class TaskListenerSupportImpl implements TaskListenerSupport {
   }
 
   @Override
-  public void removeListener(@NotNull String taskId, TaskListener listener) {
+  public void removeListener(/*@NotNull*/ String taskId, TaskListener listener) {
+    Util.checkNotNullArgument(taskId);
     if (listener != null) {
       EventEmitter<TaskListener> emitter = getTaskListener(taskId);
       emitter.removeListener(listener);
@@ -90,19 +90,22 @@ public class TaskListenerSupportImpl implements TaskListenerSupport {
   }
 
 
-  public void fireStateChanged(@NotNull ChangeEvent<State> event) {
+  public void fireStateChanged(/*@NotNull*/ ChangeEvent<State> event) {
+    Util.checkNotNullArgument(event);
     Task task = event.getSource().getTask();
     getTaskListener(task.getId()).emitter().stateChanged(event);
     globalListeners.emitter().stateChanged(event);
   }
 
-  public void fireProgressChanged(@NotNull ChangeEvent<Integer> event) {
+  public void fireProgressChanged(/*@NotNull*/ ChangeEvent<Integer> event) {
+    Util.checkNotNullArgument(event);
     Task task = event.getSource().getTask();
     getTaskListener(task.getId()).emitter().progressChanged(event);
     globalListeners.emitter().progressChanged(event);
   }
 
-  public void firePhaseChanged(@NotNull ChangeEvent<String> event) {
+  public void firePhaseChanged(/*@NotNull*/ ChangeEvent<String> event) {
+    Util.checkNotNullArgument(event);
     Task task = event.getSource().getTask();
     getTaskListener(task.getId()).emitter().phaseChanged(event);
     globalListeners.emitter().phaseChanged(event);

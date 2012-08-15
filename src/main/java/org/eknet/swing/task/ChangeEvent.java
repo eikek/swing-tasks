@@ -16,18 +16,14 @@
 
 package org.eknet.swing.task;
 
-import org.jetbrains.annotations.Nullable;
-
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 20.07.11 00:35
  */
 public interface ChangeEvent<T> extends TaskEvent {
 
-  @Nullable
   T getOldValue();
 
-  @Nullable
   T getNewValue();
   
 }

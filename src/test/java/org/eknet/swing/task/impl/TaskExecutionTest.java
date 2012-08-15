@@ -21,8 +21,6 @@ import org.testng.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.ChangeEvent;
 import org.eknet.swing.task.State;
 import org.eknet.swing.task.Task;
@@ -43,18 +41,18 @@ public class TaskExecutionTest {
     TaskControl<Long> control = manager.create(task);
     control.getContext().addListener(new TaskListener() {
       @Override
-      public void stateChanged(@NotNull ChangeEvent<State> event) {
+      public void stateChanged(ChangeEvent<State> event) {
         log.info(">>> State: " + event.getOldValue() + " => " + event.getNewValue());
         log.info("Started: " + event.getSource().getStartedTimestamp());
       }
 
       @Override
-      public void progressChanged(@NotNull ChangeEvent<Integer> event) {
+      public void progressChanged(ChangeEvent<Integer> event) {
         log.info(">>> Progress: " + event.getOldValue() + " => " + event.getNewValue());
       }
 
       @Override
-      public void phaseChanged(@NotNull ChangeEvent<String> event) {
+      public void phaseChanged(ChangeEvent<String> event) {
         log.info(">>> Phase: " + event.getOldValue() + " => " + event.getNewValue());
       }
     });

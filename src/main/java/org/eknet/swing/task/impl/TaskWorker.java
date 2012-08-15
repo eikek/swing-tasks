@@ -27,8 +27,6 @@ import javax.swing.SwingWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.Task;
 import org.eknet.swing.task.TaskContext;
 
@@ -49,7 +47,8 @@ public class TaskWorker<V, C> extends SwingWorker<V, C> implements PropertyChang
 
   private TaskContext context;
 
-  public TaskWorker(@NotNull Task<V, C> task) {
+  public TaskWorker(/*@NotNull*/ Task<V, C> task) {
+    Util.checkNotNullArgument(task);
     this.task = task;
     //to have a startedTimestamp set when the first TaskListener
     //gets the started-change, we add this as the first property
@@ -78,6 +77,7 @@ public class TaskWorker<V, C> extends SwingWorker<V, C> implements PropertyChang
     try {
       task.done(get());
     } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
       log.error("Interrupted during get()", e);
       task.failed(e);
     } catch (CancellationException e) {
@@ -87,7 +87,6 @@ public class TaskWorker<V, C> extends SwingWorker<V, C> implements PropertyChang
       this.error = true;
       log.debug("Error executing task " + task.getId() + "/" + getContextId(), e);
       if (e instanceof ExecutionException) {
-        ExecutionException executionException = (ExecutionException) e;
         task.failed(e.getCause());
       } else {
         task.failed(e);

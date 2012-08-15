@@ -16,8 +16,6 @@
 
 package org.eknet.swing.task.impl;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.ChangeEvent;
 import org.eknet.swing.task.TaskContext;
 
@@ -32,6 +30,7 @@ public class ChangeEventImpl<T> implements ChangeEvent<T> {
   private final T newValue;
 
   public ChangeEventImpl(T oldValue, T newValue, TaskContext context) {
+    Util.checkNotNullArgument(context);
     this.oldValue = oldValue;
     this.newValue = newValue;
     this.source = context;
@@ -47,7 +46,7 @@ public class ChangeEventImpl<T> implements ChangeEvent<T> {
     return newValue;
   }
 
-  @NotNull
+  /*@NotNull*/
   @Override
   public TaskContext getSource() {
     return source;

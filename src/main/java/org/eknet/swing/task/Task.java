@@ -19,15 +19,14 @@ package org.eknet.swing.task;
 import java.awt.Component;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 /**
  * A long-running task.
  * <p/>
  * The contract is this of {@link javax.swing.SwingWorker} with the difference that in case
  * of an execution exception the {@link #failed(Throwable)} method is invoked and {@link #done(Object)}
  * is not.
+ * <p/>
+ * The class {@link AbstractTask} is meant to be extended for implementing tasks.
  *
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 19.07.11 22:13
@@ -39,21 +38,20 @@ public interface Task<V, C> {
    * to be unique among all tasks. It's used to register {@link TaskListener}
    * on this id  that will receive events solely for tasks with a certain id.
    * 
-   * @return
+   * @return the task id, never null
    */
-  @NotNull
+  /*@NotNull*/
   String getId();
 
   /**
    * This method implements the long-running work and returns a result. This
    * method is invoked on a worker thread.
    * 
-   * @param tracker to publish intermediate results
-   * @return
+   * @param tracker to publish intermediate results, never null
+   * @return the result value of the task or null
    * @throws Exception
    */
-  @Nullable
-  V execute(@NotNull Tracker<C> tracker) throws Exception;
+  V execute(/*@NotNull*/ Tracker<C> tracker) throws Exception;
 
   /**
    * This method is invoked once {@link #execute(Tracker)} has successfully finished
@@ -61,7 +59,7 @@ public interface Task<V, C> {
    *
    * @param value
    */
-  void done(@Nullable V value);
+  void done(/*@Nullable*/ V value);
 
   /**
    * This method is invoked if {@link #execute(Tracker)} threw an exception. This method
@@ -69,7 +67,7 @@ public interface Task<V, C> {
    * 
    * @param cause
    */
-  void failed(@Nullable Throwable cause);
+  void failed(/*@Nullable*/ Throwable cause);
 
   /**
    * Calls going to {@link Tracker#publish(Object[])} from within
@@ -80,7 +78,10 @@ public interface Task<V, C> {
    */
   void process(List<C> chunks);
 
-  @NotNull
+  /**
+   *
+   * @return the task's mode, never null
+   */
   Mode getMode();
 
   /**
@@ -94,9 +95,8 @@ public interface Task<V, C> {
    * glass pane. These are components that implement either {@link GlassPaneContainer}
    * or {@link javax.swing.RootPaneContainer}.
    * 
-   * @return
+   * @return the component attached to this task or null
    */
-  @Nullable
   Component getComponent();
 
 }

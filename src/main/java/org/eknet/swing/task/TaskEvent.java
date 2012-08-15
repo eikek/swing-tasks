@@ -16,15 +16,12 @@
 
 package org.eknet.swing.task;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 20.07.11 00:31
  */
 public interface TaskEvent {
 
-  @NotNull
   TaskContext getSource();
 
 }

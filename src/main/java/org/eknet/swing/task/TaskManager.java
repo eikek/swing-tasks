@@ -19,9 +19,6 @@ package org.eknet.swing.task;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 /**
  * @author <a href="mailto:eike.kettner@gmail.com">Eike Kettner</a>
  * @since 19.07.11 22:16
@@ -41,15 +38,15 @@ public interface TaskManager {
    * @param <C>
    * @return
    */
-  @NotNull
-  <V, C> TaskControl<V> create(@NotNull Task<V, C> task);
+  /*@NotNull*/
+  <V, C> TaskControl<V> create(/*@NotNull*/ Task<V, C> task);
 
   /**
    * Allows to add listeners.
    * 
    * @return
    */
-  @NotNull
+  /*@NotNull*/
   TaskListenerSupport getTaskListenerSupport();
 
   /**
@@ -61,11 +58,11 @@ public interface TaskManager {
    * @param predicate
    * @return
    */
-  @NotNull
-  Iterable<TaskControl> getTasks(@NotNull TaskPredicate predicate);
+  /*@NotNull*/
+  Iterable<TaskControl> getTasks(/*@NotNull*/ TaskPredicate predicate);
 
-  @Nullable
-  TaskControl findTask(@NotNull TaskPredicate predicate);
+  /*@Nullable*/
+  TaskControl findTask(/*@NotNull*/ TaskPredicate predicate);
 
   /**
    * Looks up a task by the specified context id. 
@@ -73,8 +70,8 @@ public interface TaskManager {
    * @param contextId
    * @return
    */
-  @Nullable
-  TaskControl getTask(@NotNull String contextId);
+  /*@Nullable*/
+  TaskControl getTask(/*@NotNull*/ String contextId);
 
   /**
    * Submits a {@link Runnable} object for execution. Contrary to executing
@@ -84,8 +81,8 @@ public interface TaskManager {
    * @param task
    * @return
    */
-  @NotNull
-  Future<?> submit(@NotNull Runnable task);
+  /*@NotNull*/
+  Future<?> submit(/*@NotNull*/ Runnable task);
 
   /**
    * Submits a {@link java.util.concurrent.Callable} object for execution. Contrary to executing
@@ -95,7 +92,7 @@ public interface TaskManager {
    * @param task
    * @return
    */
-  @NotNull
-  <T> Future<T> submit(@NotNull Callable<T> task);
+  /*@NotNull*/
+  <T> Future<T> submit(/*@NotNull*/ Callable<T> task);
 
 }

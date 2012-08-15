@@ -27,8 +27,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
-import org.jetbrains.annotations.Nullable;
-
 import org.eknet.swing.task.Mode;
 import org.eknet.swing.task.TaskManager;
 import org.eknet.swing.task.TaskPredicates;
@@ -49,10 +47,10 @@ public class TaskGlassPane extends JPanel {
 
   private TaskList taskList;
 
-  @Nullable
+  /*@Nullable*/
   private final TaskManager taskManager;
 
-  public TaskGlassPane(@Nullable TaskManager taskManager) {
+  public TaskGlassPane(/*@Nullable*/ TaskManager taskManager) {
     this.color1 = new Color(0, 0, 0, 175);
     this.color2 = new Color(0, 0, 0, 120);
     this.taskManager = taskManager;
@@ -93,7 +91,7 @@ public class TaskGlassPane extends JPanel {
     super.setVisible(flag);
   }
 
-  @Nullable
+  /*@Nullable*/
   public TaskManager getTaskManager() {
     return taskManager;
   }

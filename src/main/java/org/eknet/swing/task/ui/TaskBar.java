@@ -31,9 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import org.eknet.swing.task.ChangeEvent;
 import org.eknet.swing.task.Mode;
 import org.eknet.swing.task.State;
@@ -67,8 +64,9 @@ public class TaskBar extends JPanel {
 
   private TaskPredicate filter = TaskPredicates.backgroundTasks;
   
-  public TaskBar(@NotNull TaskManager taskManager) {
+  public TaskBar(/*@NotNull*/ TaskManager taskManager) {
     super(new BorderLayout(10, 10), true);
+    Util.checkNotNullArgument(taskManager);
     this.taskManager = taskManager;
 
     progressBar = new JProgressBar(JProgressBar.CENTER);
@@ -133,7 +131,7 @@ public class TaskBar extends JPanel {
   private class UpdateListener implements TaskListener {
     private String currentProgress;
 
-    private void updateLabel(@Nullable Integer backgroundTasks, @Nullable Integer pendingTasks, @Nullable String phase) {
+    private void updateLabel(Integer backgroundTasks, Integer pendingTasks, String phase) {
       int back = backgroundTasks == null ? getBackgroundTaskCount() : backgroundTasks;
       int pend = pendingTasks == null ? getPendingTasks() : pendingTasks;
 
@@ -154,7 +152,8 @@ public class TaskBar extends JPanel {
     }
 
     @Override
-    public void stateChanged(@NotNull ChangeEvent<State> event) {
+    public void stateChanged(/*@NotNull*/ ChangeEvent<State> event) {
+      Util.checkNotNullArgument(event);
       if (!isBackground(event)) {
         return;
       }
@@ -188,7 +187,8 @@ public class TaskBar extends JPanel {
     }
 
     @Override
-    public void progressChanged(@NotNull ChangeEvent<Integer> event) {
+    public void progressChanged(/*@NotNull*/ ChangeEvent<Integer> event) {
+      Util.checkNotNullArgument(event);
       if (!isBackground(event)) {
         return;
       }
@@ -206,7 +206,8 @@ public class TaskBar extends JPanel {
     }
 
     @Override
-    public void phaseChanged(@NotNull ChangeEvent<String> event) {
+    public void phaseChanged(/*@NotNull*/ ChangeEvent<String> event) {
+      Util.checkNotNullArgument(event);
       if (!isBackground(event)) {
         return;
       }

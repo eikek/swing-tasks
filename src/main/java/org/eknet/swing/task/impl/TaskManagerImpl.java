@@ -20,16 +20,16 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.jetbrains.annotations.NotNull;
 
 import org.eknet.swing.task.ChangeEvent;
 import org.eknet.swing.task.Mode;
@@ -54,16 +54,48 @@ public class TaskManagerImpl implements TaskManager {
 
   private final Blocker blocker = new Blocker();
 
-  private final ExecutorService executorService = new ThreadPoolExecutor(0, 20,
-          60L, TimeUnit.SECONDS,
-          new SynchronousQueue<Runnable>());
+  private final ExecutorService executorService;
 
   private AtomicInteger blockingCounter = new AtomicInteger(0);
 
+  private static final ThreadFactory THREAD_FACTORY = new ThreadFactory() {
+    private final ThreadFactory defaultTf = Executors.defaultThreadFactory();
+
+    @Override
+    public Thread newThread(Runnable r) {
+      Thread t = defaultTf.newThread(r);
+      t.setName("SwingTask-" + t.getName());
+      t.setDaemon(true);
+      return t;
+    }
+  };
+
+  private static ExecutorService createExecutorService() {
+    return new ThreadPoolExecutor(2, 10,
+            20L, TimeUnit.SECONDS,
+            new LinkedBlockingQueue<Runnable>(), THREAD_FACTORY);
+  }
+
   public TaskManagerImpl() {
+    this(createExecutorService());
+  }
+
+  /**
+   * Creates a new task manager.
+   * <p/>
+   * The parameter {@code executorService} is only used when submitting {@link Runnable}s
+   * or {@link Callable}s. If {@link Task}s are submitted, they are invoked on behalf of
+   * the {@link javax.swing.SwingWorker} class that is using its own {@link ExecutorService}.
+   *
+   * @param executorService
+   */
+  public TaskManagerImpl(/*NotNull*/ ExecutorService executorService) {
+    Util.checkNotNullArgument(executorService);
+    this.executorService = executorService;
     taskListenerSupport.addListener(new TaskListenerAdapter() {
       @Override
-      public void stateChanged(@NotNull ChangeEvent<State> event) {
+      public void stateChanged(/*@NotNull*/ ChangeEvent<State> event) {
+        Util.checkNotNullArgument(event);
         final State newState = event.getNewValue();
         final String contextId = event.getSource().getContextId();
         final Task task = event.getSource().getTask();
@@ -87,9 +119,9 @@ public class TaskManagerImpl implements TaskManager {
     });
   }
 
-  @NotNull
   @Override
-  public <V, C> TaskControl<V> create(@NotNull Task<V, C> task) {
+  public <V, C> TaskControl<V> create(/*@NotNull*/ Task<V, C> task) {
+    Util.checkNotNullArgument(task);
     TaskContextImpl context = new TaskContextImpl(new TaskWorker<V, C>(task), taskListenerSupport);
     TaskControlImpl<V> control = new TaskControlImpl<V>(context);
     tasks.put(control.getContext().getContextId(), control);
@@ -97,36 +129,38 @@ public class TaskManagerImpl implements TaskManager {
     return control;
   }
 
-  @NotNull
   @Override
   public TaskListenerSupport getTaskListenerSupport() {
     return taskListenerSupport;
   }
 
-  @NotNull
-  public Iterable<TaskControl> getTasks(@NotNull TaskPredicate predicate) {
+  @Override
+  public Iterable<TaskControl> getTasks(/*@NotNull*/ TaskPredicate predicate) {
+    Util.checkNotNullArgument(predicate);
     return TaskIterable.filter(tasks.values(), predicate);
   }
 
   @Override
-  public TaskControl findTask(@NotNull TaskPredicate predicate) {
+  public TaskControl findTask(/*@NotNull*/ TaskPredicate predicate) {
+    Util.checkNotNullArgument(predicate);
     return TaskIterable.find(tasks.values(), predicate);
   }
 
-  @NotNull
   @Override
-  public Future<?> submit(@NotNull final Runnable task) {
-    return executorService.submit(task);
-  }
-
-  @NotNull
-  @Override
-  public <T> Future<T> submit(@NotNull Callable<T> task) {
+  public Future<?> submit(/*@NotNull*/ final Runnable task) {
+    Util.checkNotNullArgument(task);
     return executorService.submit(task);
   }
 
   @Override
-  public TaskControl getTask(@NotNull String contextId) {
+  public <T> Future<T> submit(/*@NotNull*/ Callable<T> task) {
+    Util.checkNotNullArgument(task);
+    return executorService.submit(task);
+  }
+
+  @Override
+  public TaskControl getTask(/*@NotNull*/ String contextId) {
+    Util.checkNotNullArgument(contextId);
     return tasks.get(contextId);
   }
 

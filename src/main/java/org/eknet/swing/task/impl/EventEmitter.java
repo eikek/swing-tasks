@@ -1,3 +1,34 @@
+/*
+ * Copyright 2011 Eike Kettner
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ * Copyright 2010 Raffael Herzog
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.eknet.swing.task.impl;
 
 import java.lang.reflect.Array;
@@ -11,9 +42,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import org.eknet.swing.task.ExceptionHandler;
 
@@ -33,7 +61,8 @@ public class EventEmitter<T extends EventListener> implements Iterable<T> {
   private volatile ExceptionHandler<T> exceptionHandler = ExceptionHandler.RETHROW_EXCEPTION_HANDLER;
 
   @SuppressWarnings({"unchecked"})
-  public EventEmitter(@NotNull Class<T> clazz, @Nullable ClassLoader loader, @Nullable ExceptionHandler<T> handler) {
+  public EventEmitter(/*@NotNull*/ Class<T> clazz, ClassLoader loader, ExceptionHandler<T> handler) {
+    Util.checkNotNullArgument(clazz);
     ClassLoader l = loader;
     if (l == null) {
       l = clazz.getClassLoader();
@@ -62,7 +91,7 @@ public class EventEmitter<T extends EventListener> implements Iterable<T> {
     return newEmitter(listenerClass, listenerClass.getClassLoader(), handler);
   }
 
-  public static <T extends EventListener> EventEmitter<T> newEmitter(Class<T> listenerClass, ClassLoader loader, @Nullable ExceptionHandler<T> handler) {
+  public static <T extends EventListener> EventEmitter<T> newEmitter(Class<T> listenerClass, ClassLoader loader, ExceptionHandler<T> handler) {
     return new EventEmitter<T>(listenerClass, loader, null);
   }
 

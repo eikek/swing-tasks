@@ -21,8 +21,6 @@ import java.util.concurrent.ExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.jetbrains.annotations.NotNull;
-
 import org.eknet.swing.task.State;
 import org.eknet.swing.task.TaskContext;
 import org.eknet.swing.task.TaskControl;
@@ -35,7 +33,8 @@ public class TaskControlImpl<V> implements TaskControl<V> {
   private final static Logger log = LoggerFactory.getLogger(TaskControlImpl.class);
   private final TaskContextImpl taskContext;
 
-  public TaskControlImpl(@NotNull TaskContextImpl taskContext) {
+  public TaskControlImpl(/*@NotNull*/ TaskContextImpl taskContext) {
+    Util.checkNotNullArgument(taskContext);
     this.taskContext = taskContext;
   }
 
@@ -70,7 +69,7 @@ public class TaskControlImpl<V> implements TaskControl<V> {
     getWorker().cancel(true);
   }
 
-  @NotNull
+  /*@NotNull*/
   @Override
   public TaskContext getContext() {
     return taskContext;
